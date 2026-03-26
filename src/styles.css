@@ -18,3 +18,9 @@ aside#sidebar{width:280px;padding:12px;background:var(--panel);border-radius:8px
 #details{font-size:13px;color:var(--muted)}
 .star{stroke:rgba(255,255,255,0.06)}
 .highlight{stroke:#ffd76b;stroke-width:2}
+
+#legend{display:flex;gap:10px;align-items:center;padding:6px 12px;color:var(--muted);font-size:13px}
+.legend-swatch{width:14px;height:14px;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,0.6)}
+.controls input[type="file"]{padding:6px 8px;border-radius:6px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);color:inherit}
+.small{font-size:13px}
+.cluster-label{fill:rgba(255,255,255,0.65);font-size:14px;font-weight:600}

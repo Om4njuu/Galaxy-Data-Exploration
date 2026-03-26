@@ -17,6 +17,7 @@ function colorForSpectral(s){
   return map[s] || '#ddd';
 }
 
+
 function load(){
   return fetch('data/sample-astronomical.json').then(r=>r.json());
 }
@@ -25,12 +26,19 @@ function setupControls(data){
   nodes = data;
   const spectral = Array.from(new Set(data.map(d=>d.spectral))).sort();
   const sel = d3.select('#spectral-filter');
+  sel.selectAll('option').filter(function(){return this.value!=='all';}).remove();
   spectral.forEach(s => sel.append('option').attr('value', s).text(s));
 
   d3.select('#brightness').on('input', applyFilters);
   sel.on('change', applyFilters);
   d3.select('#search').on('input', onSearch);
   d3.select('#reset').on('click', ()=>zoom.transform(svg, d3.zoomIdentity));
+  d3.select('#show-clusters').on('change', ()=>{
+    const vis = d3.select('#show-clusters').property('checked');
+    g.selectAll('text.cluster-label').attr('display', vis ? null : 'none');
+  });
+  d3.select('#upload').on('change', handleUpload);
+  drawLegend(data);
 }
 
 function applyFilters(){
@@ -71,6 +79,7 @@ function render(data){
 
   simulation.on('tick', ()=>{
     nodeSelection.attr('cx', d=>d.x).attr('cy', d=>d.y);
+    drawClusterLabels(data);
   });
 }
 
@@ -84,3 +93,50 @@ load().then(data=>{
   console.error('Failed loading data', err);
   d3.select('#details').text('Failed to load sample data. See console.');
 });
+
+function drawLegend(data){
+  const spectral = Array.from(new Set(data.map(d=>d.spectral))).sort();
+  const legend = d3.select('#legend');
+  legend.html('');
+  spectral.forEach(s=>{
+    const item = legend.append('div').attr('class','legend-item');
+    item.append('div').attr('class','legend-swatch').style('background', colorForSpectral(s));
+    item.append('div').style('margin-left','6px').text(s).style('color','var(--muted)');
+  });
+}
+
+// Cluster labels: place labels horizontally by cluster index
+function drawClusterLabels(data){
+  const clusters = Array.from(new Set(data.map(d=>d.cluster))).sort((a,b)=>a-b);
+  const labels = g.selectAll('text.cluster-label').data(clusters, d=>d);
+  labels.join(
+    enter => enter.append('text').attr('class','cluster-label').attr('y',40).attr('x', d=>d*120 + 200).text(d=>`Cluster ${d}`),
+    update => update.attr('x', d=>d*120 + 200),
+    exit => exit.remove()
+  );
+  const vis = d3.select('#show-clusters').property ? d3.select('#show-clusters').property('checked') : true;
+  g.selectAll('text.cluster-label').attr('display', vis ? null : 'none');
+}
+
+function handleUpload(event){
+  const f = event.target.files && event.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const parsed = JSON.parse(e.target.result);
+      if(!Array.isArray(parsed)) throw new Error('Expected JSON array of nodes');
+      // basic schema validation
+      const ok = parsed.every(d=>d.id!=null && d.name && d.brightness!=null && d.size!=null && d.spectral!=null && d.cluster!=null);
+      if(!ok) throw new Error('Invalid node schema — each item needs id,name,brightness,size,spectral,cluster');
+      // stop previous simulation
+      if(simulation) simulation.stop();
+      g.selectAll('*').remove();
+      setupControls(parsed);
+      render(parsed);
+    }catch(err){
+      alert('Failed to load dataset: '+err.message);
+    }
+  };
+  reader.readAsText(f);
+}

@@ -16,8 +16,11 @@
         <option value="all">All Spectral Types</option>
       </select>
       <label>Min Brightness <input id="brightness" type="range" min="0" max="100" value="0"></label>
+      <label class="small"><input id="show-clusters" type="checkbox" checked> Show Cluster Labels</label>
+      <input id="upload" type="file" accept=".json" title="Upload JSON dataset" />
       <button id="reset">Reset View</button>
     </div>
+    <div id="legend" aria-hidden="false"></div>
   </header>
 
   <main>
