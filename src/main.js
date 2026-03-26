@@ -40,6 +40,11 @@ function setupControls(data){
   });
   d3.select('#upload').on('change', handleUpload);
   drawLegend(data);
+  // wire brightness live value display
+  const brightnessEl = d3.select('#brightness');
+  const brightnessVal = d3.select('#brightness-value');
+  brightnessVal.text(brightnessEl.node().value);
+  brightnessEl.on('input.value', function(){ brightnessVal.text(this.value); applyFilters(); });
 }
 
 function applyFilters(){

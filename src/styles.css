@@ -5,10 +5,10 @@
   --muted:#9aa6b2;
 }
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Arial;background:linear-gradient(180deg,#02040a 0%, #091021 100%);color:#e6f0ff}
+html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Arial;background:#000;color:#e6f8ff}
 header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px}
 .controls{display:flex;gap:8px;align-items:center}
-input,select{padding:6px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:inherit}
+input,select{padding:6px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);color:inherit}
 main{display:flex;height:calc(100vh - 68px);gap:12px;padding:12px}
 #vis-area{flex:1;position:relative;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.015);box-shadow:0 6px 24px rgba(0,0,0,0.6)}
 svg{width:100%;height:100%;display:block}
@@ -28,3 +28,6 @@ aside#sidebar{width:280px;padding:12px;background:var(--panel);border-radius:8px
 .controls input[type="file"]{padding:6px 8px;border-radius:6px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);color:inherit}
 .small{font-size:13px}
 .cluster-label{fill:rgba(255,255,255,0.65);font-size:14px;font-weight:600}
+
+.range-min,.range-max{font-size:12px;color:var(--muted);margin:0 6px}
+#brightness-value{font-weight:700;color:var(--accent);margin:0 6px}
