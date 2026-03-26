@@ -11,6 +11,7 @@ const tooltip = d3.select('#tooltip');
 const sidebar = d3.select('#details');
 
 let nodes = [];
+let selectedSpectrals = new Set();
 
 function colorForSpectral(s){
   const map = {O:'#9bb0ff',B:'#aabfff',A:'#cad7ff',F:'#f8f7ff',G:'#fff4ea',K:'#ffd2a1',M:'#ffcc6f'};
@@ -44,7 +45,9 @@ function setupControls(data){
 function applyFilters(){
   const minB = +d3.select('#brightness').node().value;
   const spec = d3.select('#spectral-filter').node().value;
-  nodeSelection.attr('display', d => (d.brightness>=minB && (spec==='all' || d.spectral===spec)) ? null : 'none');
+  // if legend selection active, use it; otherwise use dropdown spectral
+  const activeSet = selectedSpectrals.size > 0 ? selectedSpectrals : (spec === 'all' ? null : new Set([spec]));
+  nodeSelection.transition().duration(400).attr('opacity', d => (d.brightness >= minB && (!activeSet || activeSet.has(d.spectral))) ? 1 : 0.08);
 }
 
 function onSearch(){
@@ -69,10 +72,13 @@ function render(data){
     .force('y', d3.forceY().strength(0.01).y(centerY))
     .force('cluster', clusterForce(clusters, centerX, centerY, clusterSpacing, 0.08));
 
-  nodeSelection = g.selectAll('circle').data(data, d=>d.id).join('circle')
+  // data join with animated enter/update/exit
+  const join = g.selectAll('circle').data(data, d=>d.id);
+  const enter = join.enter().append('circle')
     .attr('class','star')
-    .attr('r', d=>d.size)
+    .attr('r', 0)
     .attr('fill', d=>colorForSpectral(d.spectral))
+    .attr('opacity',0)
     .on('mouseover', (event,d)=>{
       tooltip.classed('hidden', false).html(`<strong>${d.name}</strong><br/>Brightness: ${d.brightness}<br/>Spectral: ${d.spectral}`);
     })
@@ -83,6 +89,14 @@ function render(data){
     .on('click', (event,d)=>{
       sidebar.html(`<strong>${d.name}</strong><p>ID: ${d.id}</p><p>Brightness: ${d.brightness}</p><p>Size: ${d.size}</p><p>Spectral: ${d.spectral}</p><p>Cluster: ${d.cluster}</p>`);
     });
+
+  enter.transition().duration(700).attr('r', d=>d.size).attr('opacity',1);
+
+  const update = join.transition().duration(600).attr('r', d=>d.size).attr('fill', d=>colorForSpectral(d.spectral)).attr('opacity',1);
+
+  join.exit().transition().duration(400).attr('opacity',0).attr('r',0).remove();
+
+  nodeSelection = g.selectAll('circle');
 
   simulation.on('tick', ()=>{
     nodeSelection.attr('cx', d=>d.x).attr('cy', d=>d.y);
@@ -133,10 +147,22 @@ function drawLegend(data){
   const legend = d3.select('#legend');
   legend.html('');
   spectral.forEach(([s,count])=>{
-    const item = legend.append('div').attr('class','legend-item');
+    const item = legend.append('div').attr('class','legend-item').attr('data-spectral', s);
     item.append('div').attr('class','legend-swatch').style('background', colorForSpectral(s));
     item.append('div').style('margin-left','6px').text(s).style('color','var(--muted)');
     item.append('div').attr('class','legend-count').text(count);
+    item.on('click', function(){
+      const spec = d3.select(this).attr('data-spectral');
+      if(selectedSpectrals.has(spec)) selectedSpectrals.delete(spec);
+      else selectedSpectrals.add(spec);
+      // update active classes
+      legend.selectAll('.legend-item').classed('active', function(){
+        const s = d3.select(this).attr('data-spectral');
+        return selectedSpectrals.has(s);
+      });
+      // apply filters after toggling
+      applyFilters();
+    });
   });
 }
 
@@ -183,11 +209,19 @@ function handleUpload(event){
       // basic schema validation
       const ok = parsed.every(d=>d.id!=null && d.name && d.brightness!=null && d.size!=null && d.spectral!=null && d.cluster!=null);
       if(!ok) throw new Error('Invalid node schema — each item needs id,name,brightness,size,spectral,cluster');
-      // stop previous simulation
-      if(simulation) simulation.stop();
-      g.selectAll('*').remove();
-      setupControls(parsed);
-      render(parsed);
+      // animate out existing nodes then render new dataset
+      const old = g.selectAll('circle');
+      if(old.size()>0){
+        old.transition().duration(450).attr('opacity',0).attr('r',0).remove().on('end', ()=>{
+          g.selectAll('*').remove();
+          setupControls(parsed);
+          render(parsed);
+        });
+      }else{
+        g.selectAll('*').remove();
+        setupControls(parsed);
+        render(parsed);
+      }
     }catch(err){
       alert('Failed to load dataset: '+err.message);
     }
