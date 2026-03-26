@@ -1,0 +1,12 @@
+[
+  {"name":"Sirius","brightness":25,"size":1.7,"type":"A"},
+  {"name":"Betelgeuse","brightness":80,"size":1200,"type":"M"},
+  {"name":"Rigel","brightness":60,"size":70,"type":"B"},
+  {"name":"Vega","brightness":40,"size":2.5,"type":"A"},
+  {"name":"Polaris","brightness":22,"size":44,"type":"F"},
+  {"name":"Deneb","brightness":55,"size":200,"type":"A"},
+  {"name":"Altair","brightness":15,"size":1.8,"type":"A"},
+  {"name":"Aldebaran","brightness":45,"size":44,"type":"K"},
+  {"name":"Antares","brightness":90,"size":800,"type":"M"},
+  {"name":"Spica","brightness":30,"size":7.5,"type":"B"}
+]

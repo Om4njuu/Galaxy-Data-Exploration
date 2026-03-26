@@ -5,40 +5,31 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Galaxy Data Exploration</title>
   <link rel="stylesheet" href="src/styles.css">
-  <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
   <header>
     <h1>Galaxy Data Exploration</h1>
     <div class="controls">
-      <input id="search" placeholder="Search star by name or id..." />
-      <select id="spectral-filter">
-        <option value="all">All Spectral Types</option>
-      </select>
-      <label class="small">Brightness
-        <span class="range-min">0</span>
-        <input id="brightness" type="range" min="0" max="100" value="0">
-        <span id="brightness-value">0</span>
-        <span class="range-max">100</span>
-      </label>
-      <label class="small"><input id="show-clusters" type="checkbox" checked> Show Cluster Labels</label>
-      <input id="upload" type="file" accept=".json" title="Upload JSON dataset" />
-      <button id="reset">Reset View</button>
+      <input id="file-input" type="file" multiple />
+      <select id="group-attribute"><option value="__auto">Auto / filename</option></select>
+      <input id="search" placeholder="Search (name or property)" />
+      <div id="filters"></div>
     </div>
-    <div id="legend" aria-hidden="false"></div>
   </header>
 
   <main>
-    <div id="vis-area">
-      <svg id="galaxy"></svg>
-      <div id="tooltip" class="hidden"></div>
+    <div id="viz-wrap">
+      <svg id="viz"></svg>
     </div>
-    <aside id="sidebar">
+    <aside id="details">
       <h2>Details</h2>
-      <div id="details">Click a star to see details</div>
+      <div id="details-content">Click a star to see details</div>
     </aside>
   </main>
 
-  <script type="module" src="src/main.js"></script>
+  <div id="tooltip" class="hidden"></div>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="src/app.js"></script>
 </body>
 </html>

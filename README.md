@@ -1,36 +1,22 @@
-# Galaxy Data Exploration
-
-Lightweight static prototype demonstrating a galaxy-like data visualization using D3.
-
-Quick start
-
-1. Serve the folder with a local HTTP server (browsers block fetch on file://):
-
-```bash
-python -m http.server 8000
-# or using Node.js
-npx http-server . -p 8000
-```
-
-2. Open http://localhost:8000 in your browser.
-
-Features included
-
-- D3 force simulation to arrange points as a galaxy
-- Pan & zoom
-- Search by name or id
-- Spectral-type filter and brightness slider
-- Hover tooltip and click details sidebar
-
-Files
-
-- `index.html` — main page
-- `src/main.js` — D3 logic and interactions
-- `src/styles.css` — styling
-- `data/sample-astronomical.json` — sample dataset
-
-Next steps
-
-- Add clustering labels, improved legends, and timeline animation
-- Support CSV & larger datasets via streaming or server API
 # Galaxy-Data-Exploration
+
+This repository includes a simple web demo for "Galaxy Data Exploration": upload datasets (CSV or JSON) and visualize points as stars grouped into constellations.
+
+Quick start:
+
+1. Open [index.html](index.html) in your browser (a local static server is recommended).
+2. Upload one or more files (CSV or JSON). The app groups records by filename by default; you can select an attribute to group by.
+
+Files added:
+
+- [index.html](index.html) — main page
+- [src/styles.css](src/styles.css) — basic styling
+- [src/app.js](src/app.js) — D3 visualization, upload, grouping, zoom, search, filters
+- [data/sample.json](data/sample.json) — sample dataset
+
+To run a local server (Python):
+
+```powershell
+python -m http.server 8000
+# then open http://localhost:8000
+```
