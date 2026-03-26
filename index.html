@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Galaxy Data Exploration</title>
+  <link rel="stylesheet" href="src/styles.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Galaxy Data Exploration</h1>
+    <div class="controls">
+      <input id="search" placeholder="Search star by name or id..." />
+      <select id="spectral-filter">
+        <option value="all">All Spectral Types</option>
+      </select>
+      <label>Min Brightness <input id="brightness" type="range" min="0" max="100" value="0"></label>
+      <button id="reset">Reset View</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="vis-area">
+      <svg id="galaxy"></svg>
+      <div id="tooltip" class="hidden"></div>
+    </div>
+    <aside id="sidebar">
+      <h2>Details</h2>
+      <div id="details">Click a star to see details</div>
+    </aside>
+  </main>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
